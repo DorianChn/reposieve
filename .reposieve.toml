@@ -1,0 +1,5 @@
+[reposieve]
+budget_tokens = 12000
+max_file_bytes = 256000
+redact = true
+exclude = ["context.md", "*.egg-info/"]
