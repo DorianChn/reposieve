@@ -105,6 +105,15 @@ python -m reposieve scan . --json
 
 Contributions, issue reports, and new redaction test cases are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
+---
+
+## More in this suite
+
+AI agent security toolkit by DorianChn:
+
+- [agent-canary](https://github.com/DorianChn/agent-canary) — zero-false-positive honeypot tripwires: decoy MCP tools + canary tokens
+- [traceplay](https://github.com/DorianChn/traceplay) — record & replay agent trajectories in CI — zero tokens
+- [agent-gate](https://github.com/DorianChn/agent-gate) — tool-call policy gateway: least privilege, short-lived credentials, audit
 ## License
 
 MIT. See [`LICENSE`](LICENSE).
