@@ -31,6 +31,8 @@ reposieve pack . --budget 12000 --output context.md
 reposieve pack . --format json --output context.json
 ```
 
+JSON output uses `"root": "."` rather than exposing the caller's absolute local path.
+
 The same commands work without installation:
 
 ```bash

@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from reposieve.cli import _scan_payload
 from reposieve.config import Config
 from reposieve.packer import build_pack, result_as_json
 from reposieve.redaction import find_secrets, redact_secrets
@@ -101,6 +102,18 @@ class PackTests(unittest.TestCase):
             self.assertIn("README.md", pack.included)
             self.assertLessEqual(pack.estimated_tokens, 256)
             self.assertEqual(payload["estimated_tokens"], pack.estimated_tokens)
+            self.assertEqual(payload["root"], ".")
+            self.assertNotIn(str(root), result_as_json(result, pack))
+
+    def test_scan_json_payload_does_not_expose_absolute_root(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "main.py").write_text("print('ok')\n", encoding="utf-8")
+
+            payload = _scan_payload(scan_path(root))
+
+            self.assertEqual(payload["root"], ".")
+            self.assertNotIn(str(root), json.dumps(payload))
 
     def test_pack_budget_also_covers_a_large_repository_map(self):
         with tempfile.TemporaryDirectory() as directory:

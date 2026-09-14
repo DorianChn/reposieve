@@ -74,7 +74,9 @@ def build_pack(
 
 def result_as_json(scan: ScanResult, pack: PackResult) -> str:
     payload = {
-        "root": str(scan.root),
+        # Do not leak the caller's absolute local path into a pack that may
+        # be handed to an AI agent or uploaded by a downstream tool.
+        "root": ".",
         "files_scanned": len(scan.files),
         "files_skipped": len(scan.skipped),
         "files_included": list(pack.included),
