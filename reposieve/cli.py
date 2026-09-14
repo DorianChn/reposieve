@@ -157,7 +157,9 @@ def _init_config(path: str, force: bool) -> int:
 
 def _scan_payload(result):
     return {
-        "root": str(result.root),
+        # Keep machine-readable output portable and avoid exposing the local
+        # user's absolute path when scan results are forwarded elsewhere.
+        "root": ".",
         "files_scanned": len(result.files),
         "files_skipped": len(result.skipped),
         "total_bytes": result.total_bytes,
