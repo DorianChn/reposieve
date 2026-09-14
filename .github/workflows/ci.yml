@@ -21,7 +21,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Run unit tests
         run: python -m unittest discover -s tests -v
-      - name: Smoke test the CLI
-        run: python -m reposieve scan . --json
+      - name: Build and smoke-test the installed CLI
+        run: |
+          python -m pip wheel . --no-deps --wheel-dir dist
+          python -m pip install --no-deps dist/*.whl
+          python -m pip check
+          reposieve --version
+          reposieve check . --json
       - name: Check repository for secrets
         run: python -m reposieve check .
