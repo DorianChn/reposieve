@@ -86,7 +86,7 @@ def load_gitignore_rules(root) -> list[str]:
 def is_ignored(relative_path: str, rules: list[str] | tuple[str, ...]) -> bool:
     """Apply the useful, portable subset of gitignore matching rules."""
 
-    path = relative_path.replace("\\", "/").lstrip("./")
+    path = _normalize_relative_path(relative_path)
     ignored = False
     for raw_rule in rules:
         rule = raw_rule.strip()
@@ -108,7 +108,14 @@ def matches_pattern(relative_path: str, pattern: str) -> bool:
     pattern = pattern.strip()
     if not pattern or pattern.startswith("!"):
         return False
-    return _matches(relative_path.replace("\\", "/").lstrip("./"), pattern)
+    return _matches(_normalize_relative_path(relative_path), pattern)
+
+
+def _normalize_relative_path(relative_path: str) -> str:
+    path = relative_path.replace("\\", "/")
+    while path.startswith("./"):
+        path = path[2:]
+    return path.lstrip("/")
 
 
 def _matches(path: str, rule: str) -> bool:
