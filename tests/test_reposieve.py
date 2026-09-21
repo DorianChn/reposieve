@@ -44,10 +44,13 @@ class ScannerTests(unittest.TestCase):
     def test_respects_gitignore_and_skips_binary_content(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            (root / ".gitignore").write_text("ignored.txt\nsecret.env\n", encoding="utf-8")
+            (root / ".gitignore").write_text(
+                "ignored.txt\nsecret.env\n.env\n", encoding="utf-8"
+            )
             (root / "main.py").write_text("print('ok')\n", encoding="utf-8")
             (root / "ignored.txt").write_text("do not include\n", encoding="utf-8")
             (root / "secret.env").write_text("TOKEN=super-secret-value\n", encoding="utf-8")
+            (root / ".env").write_text("UNUSUAL_SECRET=local-only\n", encoding="utf-8")
             (root / "image.png").write_bytes(b"\x89PNG\r\n\x00binary")
             (root / ".git").mkdir()
             (root / ".git" / "config").write_text("internal", encoding="utf-8")
@@ -58,6 +61,7 @@ class ScannerTests(unittest.TestCase):
             self.assertIn("main.py", paths)
             self.assertNotIn("ignored.txt", paths)
             self.assertNotIn("secret.env", paths)
+            self.assertNotIn(".env", paths)
             self.assertNotIn(".git/config", paths)
             self.assertIn("image.png", {file.path for file in result.skipped})
 
