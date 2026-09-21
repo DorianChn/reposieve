@@ -102,6 +102,20 @@ class PackTests(unittest.TestCase):
             self.assertLessEqual(pack.estimated_tokens, 256)
             self.assertEqual(payload["estimated_tokens"], pack.estimated_tokens)
 
+    def test_no_redact_does_not_report_redactions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            secret = "super-" + "secret-value"
+            (root / "app.py").write_text(f"API_KEY={secret}\n", encoding="utf-8")
+
+            scan = scan_path(root)
+            pack = build_pack(scan, budget_tokens=256, redact=False)
+            payload = json.loads(result_as_json(scan, pack))
+
+            self.assertIn(secret, pack.content)
+            self.assertEqual(pack.redactions, ())
+            self.assertEqual(payload["redactions"], [])
+
     def test_pack_budget_also_covers_a_large_repository_map(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
