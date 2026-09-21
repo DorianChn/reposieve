@@ -39,10 +39,10 @@ def build_pack(
     used_chars = len(prefix)
 
     for file in files:
-        safe_content, findings = redact_secrets(file.content) if redact else (
-            file.content,
-            file.findings,
-        )
+        if redact:
+            safe_content, findings = redact_secrets(file.content)
+        else:
+            safe_content, findings = file.content, ()
         section = _file_section(file, safe_content)
         if used_chars + len(section) <= budget_chars:
             chunks.append(section)
